@@ -17,9 +17,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
+      TextStyle(fontSize: 30, fontWeight: FontWeight.w600, color: Colors.white);
   static const List<Widget> _widgetOptions = <Widget>[
-    
     Alarm(),
     Text(
       'Reminder Page',
@@ -37,18 +36,18 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromARGB(255, 33, 41, 46),
       appBar: AppBar(
         elevation: 20,
         title: const Text('Smart Notify'),
-        //backgroundColor: Color.fromARGB(255, 65, 63, 63),
+        backgroundColor: Color.fromARGB(255, 36, 49, 58),
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Color.fromARGB(255, 36, 49, 58),
           boxShadow: [
             BoxShadow(
               blurRadius: 20,
@@ -60,30 +59,35 @@ class _HomePageState extends State<HomePage> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
             child: GNav(
-              rippleColor: Colors.grey[300]!,
-              hoverColor: Colors.grey[100]!,
+              backgroundColor: Color.fromARGB(255, 36, 49, 58),
+              rippleColor: Color.fromARGB(255, 38, 54, 63)!,
+              hoverColor: Color.fromARGB(255, 32, 42, 48)!,
               gap: 8,
-              activeColor: Colors.black,
+              activeColor: Color.fromARGB(255, 255, 255, 255),
               iconSize: 24,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               duration: Duration(milliseconds: 400),
-              tabBackgroundColor: Colors.grey[100]!,
-              color: Colors.black,
+              tabBackgroundColor: Color.fromARGB(255, 50, 65, 75)!,
+              color: Color.fromARGB(255, 0, 0, 0),
               tabs: const [
                 GButton(
                   icon: NavIcons.alarm,
+                  iconColor: Colors.white,
                   text: 'Alarms',
                 ),
                 GButton(
                   icon: NavIcons.reminder,
+                  iconColor: Colors.white,
                   text: 'Reminders',
                 ),
                 GButton(
                   icon: NavIcons.timer,
+                  iconColor: Colors.white,
                   text: 'Timer',
                 ),
                 GButton(
                   icon: NavIcons.stopwatch,
+                  iconColor: Colors.white,
                   text: 'Stopwatch',
                 ),
               ],
