@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:smart_notify/alarm.dart';
 import 'nav_icons.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,10 +19,8 @@ class _HomePageState extends State<HomePage> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Alarm Page',
-      style: optionStyle,
-    ),
+    
+    Alarm(),
     Text(
       'Reminder Page',
       style: optionStyle,
