@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:smart_notify/database.dart';
 import 'homepage.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  var box = await Hive.openBox('mybox');
+  Database db = Database();
+  if (box.get('list') == null) {
+    db.createInitialData();
+  }
+  db.updateDataBase();
   runApp(const MyApp());
 }
 

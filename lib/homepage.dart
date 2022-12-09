@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:smart_notify/alarm.dart';
+import 'package:smart_notify/reminder.dart';
 import 'nav_icons.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,15 +16,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool val = true;
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600, color: Colors.white);
   static const List<Widget> _widgetOptions = <Widget>[
     Alarm(),
-    Text(
-      'Reminder Page',
-      style: optionStyle,
-    ),
+    Reminder(),
     Text(
       'Timer Page',
       style: optionStyle,
