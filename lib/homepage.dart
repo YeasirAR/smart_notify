@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:smart_notify/alarm.dart';
-import 'package:smart_notify/reminder.dart';
-import 'nav_icons.dart';
+import 'alarm/alarm.dart';
+import 'database/nav_icons.dart';
+import 'reminder/reminder.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

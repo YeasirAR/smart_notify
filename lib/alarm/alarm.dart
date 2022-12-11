@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-import 'package:smart_notify/database.dart';
+import 'package:smart_notify/database/database.dart';
 import 'package:smart_notify/homepage.dart';
+
+import 'createAlarm.dart';
 
 class Alarm extends StatefulWidget {
   const Alarm({super.key});
@@ -12,12 +14,28 @@ class Alarm extends StatefulWidget {
 
 class _AlarmState extends State<Alarm> {
   Database db = Database();
+  void createAlarm() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CreateAlarm();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<String> entries = <String>['A', 'B', 'C'];
     final List<bool> val = <bool>[false, true, false];
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 33, 41, 46),
+      floatingActionButton: FloatingActionButton(
+        onPressed: createAlarm,
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(25),
         child: ListView.separated(

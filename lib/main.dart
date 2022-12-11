@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:smart_notify/database.dart';
+import 'package:smart_notify/database/database.dart';
 import 'homepage.dart';
 
 void main() async {
