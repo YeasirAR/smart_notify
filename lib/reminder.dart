@@ -27,7 +27,7 @@ class _ReminderState extends State<Reminder> {
                         backgroundColor: const Color.fromARGB(255, 60, 83, 99),
                       ),
                       onPressed: (() => {}),
-                      child: const Text('Add Time Based Reminder')),
+                      child: const Text('Add Reminder')),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 5.0),
@@ -36,7 +36,7 @@ class _ReminderState extends State<Reminder> {
                         backgroundColor: const Color.fromARGB(255, 60, 83, 99),
                       ),
                       onPressed: (() => {}),
-                      child: const Text('Add Location Based Reminder')),
+                      child: const Text('Location Reminder')),
                 ),
               ]),
         ),

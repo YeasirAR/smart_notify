@@ -24,12 +24,36 @@ class _AlarmState extends State<Alarm> {
           itemCount: 3,
           itemBuilder: (BuildContext context, int index) {
             return Container(
-              height: 60,
+              height: 80,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 29, 62, 75),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(children: [
+                Column(
+                  children: [
+                    Padding(
+                        padding: EdgeInsets.only(left: 15),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 0),
+                          child: Icon(
+                            Icons.text_snippet_outlined,
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                        )),
+                    Padding(
+                        padding: EdgeInsets.only(left: 15),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Icon(
+                            Icons.timelapse,
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                        )),
+                  ],
+                ),
                 Column(
                   children: const [
                     Padding(
@@ -42,30 +66,47 @@ class _AlarmState extends State<Alarm> {
                     Padding(
                       padding: EdgeInsets.only(left: 15),
                       child: Text(
-                        "2:30 PM",
-                        style: TextStyle(fontSize: 25, color: Colors.white),
+                        "12:30 PM",
+                        style: TextStyle(fontSize: 40, color: Colors.white),
                       ),
                     ),
                   ],
                 ),
                 Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Padding(
                         padding: const EdgeInsets.only(left: 15),
-                        child: FlutterSwitch(
-                          value: db.info[index],
-                          onToggle: (v) {
-                            setState(() {
-                              db.loadData();
-                              db.info[index] = !db.info[index];
-                              db.updateDataBase();
-                            });
-                          },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 7),
+                          child: FlutterSwitch(
+                            value: db.info[index],
+                            height: 25,
+                            width: 40,
+                            onToggle: (v) {
+                              setState(() {
+                                db.loadData();
+                                db.info[index] = !db.info[index];
+                                db.updateDataBase();
+                              });
+                            },
+                          ),
                         )),
-                    const Padding(
-                        padding: EdgeInsets.only(left: 15), child: null),
+                    Padding(
+                        padding: EdgeInsets.only(left: 15),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 0),
+                          child: IconButton(
+                            icon: Icon(Icons.delete_rounded),
+                            color: Colors.white,
+                            iconSize: 32,
+                            onPressed: () {
+                              setState(() {});
+                            },
+                          ),
+                        )),
                   ],
-                )
+                ),
               ]),
             );
           },
