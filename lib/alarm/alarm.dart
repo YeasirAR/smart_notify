@@ -13,7 +13,16 @@ class Alarm extends StatefulWidget {
 }
 
 class _AlarmState extends State<Alarm> {
+  List<bool> val = [false, true, false];
   Database db = Database();
+  void createTimeAlarm() async {
+    TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
+    final TimeOfDay? newTime = await showTimePicker(
+      context: context,
+      initialTime: _time,
+    );
+  }
+
   void createAlarm() {
     showDialog(
       context: context,
@@ -26,11 +35,12 @@ class _AlarmState extends State<Alarm> {
   @override
   Widget build(BuildContext context) {
     final List<String> entries = <String>['A', 'B', 'C'];
-    final List<bool> val = <bool>[false, true, false];
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 33, 41, 46),
       floatingActionButton: FloatingActionButton(
-        onPressed: createAlarm,
+        onPressed: () {
+          createAlarm();
+        },
         child: Icon(
           Icons.add,
           color: Colors.white,
@@ -98,14 +108,16 @@ class _AlarmState extends State<Alarm> {
                         child: Padding(
                           padding: const EdgeInsets.only(top: 7),
                           child: FlutterSwitch(
-                            value: db.info[index],
+                            value: val[index],
+                            // value: db.info[index],
                             height: 25,
                             width: 40,
                             onToggle: (v) {
                               setState(() {
-                                db.loadData();
-                                db.info[index] = !db.info[index];
-                                db.updateDataBase();
+                                val[index] = v;
+                                // db.loadData();
+                                // db.info[index] = !db.info[index];
+                                // db.updateDataBase();
                               });
                             },
                           ),
