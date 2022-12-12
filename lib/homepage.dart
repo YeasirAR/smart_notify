@@ -7,6 +7,7 @@ import 'package:line_icons/line_icons.dart';
 import 'alarm/alarm.dart';
 import 'database/nav_icons.dart';
 import 'reminder/reminder.dart';
+import 'timer/timer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,10 +24,7 @@ class _HomePageState extends State<HomePage> {
   static const List<Widget> _widgetOptions = <Widget>[
     Alarm(),
     Reminder(),
-    Text(
-      'Timer Page',
-      style: optionStyle,
-    ),
+    Timer(),
     Text(
       'Stopwatch Page',
       style: optionStyle,
@@ -64,6 +62,7 @@ class _HomePageState extends State<HomePage> {
               gap: 8,
               activeColor: Color.fromARGB(255, 255, 255, 255),
               iconSize: 24,
+              textSize: 1,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               duration: Duration(milliseconds: 400),
               tabBackgroundColor: Color.fromARGB(255, 50, 65, 75)!,
