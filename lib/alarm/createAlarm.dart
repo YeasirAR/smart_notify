@@ -8,14 +8,21 @@ class CreateAlarm extends StatefulWidget {
 }
 
 class _CreateAlarmState extends State<CreateAlarm> {
+  TimeOfDay _time = TimeOfDay.now();
   @override
   Widget build(BuildContext context) {
     void createTimeAlarm() async {
-      TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
       final TimeOfDay? newTime = await showTimePicker(
         context: context,
         initialTime: _time,
       );
+      if (newTime != null) {
+        setState(() {
+          _time = newTime;
+          Navigator.pop(context);
+        });
+      }
+      //print(_time.format(context));
     }
 
     return AlertDialog(
@@ -34,6 +41,7 @@ class _CreateAlarmState extends State<CreateAlarm> {
                 ),
               ),
               TextFormField(
+                style: TextStyle(color: Colors.white),
                 onChanged: (value) {},
                 decoration: InputDecoration(
                     label: Text("Alarm Title",
@@ -61,7 +69,7 @@ class _CreateAlarmState extends State<CreateAlarm> {
                       ),
                       onPressed: () {
                         setState(() {
-                          Navigator.pop(context);
+                          //Navigator.pop(context);
                           createTimeAlarm();
                         });
                       },

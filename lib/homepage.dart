@@ -24,7 +24,10 @@ class _HomePageState extends State<HomePage> {
   static const List<Widget> _widgetOptions = <Widget>[
     Alarm(),
     Reminder(),
-    Timer(),
+    Text(
+      "Timer",
+      style: optionStyle,
+    ),
     Text(
       'Stopwatch Page',
       style: optionStyle,

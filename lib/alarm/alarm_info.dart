@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
+
 class AlarmInfo {
   String title;
-  bool isLocation;
-  String date_location;
-  AlarmInfo(this.title, this.isLocation, this.date_location);
+  TimeOfDay time;
+  bool isEnabled;
+  AlarmInfo(this.title, this.time, this.isEnabled);
 }

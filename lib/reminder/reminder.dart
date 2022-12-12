@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_switch/flutter_switch.dart';
+import 'package:smart_notify/database/database.dart';
+import 'package:smart_notify/homepage.dart';
+import 'package:smart_notify/reminder/reminder_info.dart';
 
 class Reminder extends StatefulWidget {
   const Reminder({super.key});
@@ -8,37 +12,239 @@ class Reminder extends StatefulWidget {
 }
 
 class _ReminderState extends State<Reminder> {
+  List<ReminderInfo> listItems = [];
+  Database db = Database();
+  late int listLength;
+  String ReminderTitle = 'No Title';
+  TimeOfDay _time = TimeOfDay.now();
+
+  @override
+  void initState() {
+    // listItems.add(ReminderInfo("FYDP CLASS", "12:00 PM", true));
+    // listItems.add(ReminderInfo("SAD CLASS", "11:30 AM", false));
+    // listItems.add(ReminderInfo("MAD CLASS", "10:00 AM", true));
+    //listLength = listItems.length;
+    super.initState();
+  }
+
+  void crateListItem() {
+    listItems.add(ReminderInfo(ReminderTitle, _time, true));
+  }
+
+  void createTimeReminder() async {
+    final TimeOfDay? newTime = await showTimePicker(
+      context: context,
+      initialTime: _time,
+    );
+    if (newTime != null) {
+      setState(() {
+        _time = newTime;
+        crateListItem();
+        Navigator.pop(context);
+      });
+    }
+  }
+
+  void createReminder() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Color.fromARGB(255, 19, 40, 48),
+          content: Container(
+              alignment: Alignment.center,
+              height: 250,
+              width: 400,
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Text(
+                      "ADD REMINDER",
+                      style: TextStyle(color: Colors.white, fontSize: 30),
+                    ),
+                  ),
+                  TextFormField(
+                    style: TextStyle(color: Colors.white),
+                    onChanged: (value) {
+                      ReminderTitle = value;
+                    },
+                    decoration: InputDecoration(
+                        label: Text("Reminder Title",
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 20)),
+                        disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(width: 3, color: Colors.white)),
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white)),
+                        hintText: 'Enter Reminder title',
+                        hintStyle: TextStyle(
+                            color: Color.fromARGB(255, 150, 148, 148),
+                            fontSize: 20)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 5),
+                    child: SizedBox(
+                      width: 500,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 60, 83, 99),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              //Navigator.pop(context);
+                              createTimeReminder();
+                            });
+                          },
+                          child: const Text('Add Time Based Reminder')),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 500,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 60, 83, 99),
+                        ),
+                        onPressed: (() => {}),
+                        child: const Text('Add Location Based Reminder')),
+                  ),
+                ],
+              )),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, 'Cancel');
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'OK'),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 33, 41, 46),
-      body: Center(
-        child: SizedBox(
-          height: double.infinity,
-          width: double.infinity,
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 5.0),
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 60, 83, 99),
-                      ),
-                      onPressed: (() => {}),
-                      child: const Text('Add Reminder')),
+      backgroundColor: const Color.fromARGB(255, 33, 41, 46),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          createReminder();
+        },
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(25),
+        child: ListView.separated(
+          itemCount: listItems.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Container(
+              height: 80,
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 29, 62, 75),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(children: [
+                Column(
+                  children: [
+                    Padding(
+                        padding: EdgeInsets.only(left: 15),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 0),
+                          child: Icon(
+                            Icons.text_snippet_outlined,
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                        )),
+                    Padding(
+                        padding: EdgeInsets.only(left: 15),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Icon(
+                            Icons.timelapse,
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                        )),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 5.0),
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 60, 83, 99),
+                Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 15),
+                      child: Text(
+                        listItems[index].title,
+                        style: TextStyle(fontSize: 25, color: Colors.white),
                       ),
-                      onPressed: (() => {}),
-                      child: const Text('Location Reminder')),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 15),
+                      child: Text(
+                        listItems[index].time.format(context),
+                        style: TextStyle(fontSize: 40, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 7),
+                          child: FlutterSwitch(
+                            value: listItems[index].isEnabled,
+                            // value: db.info[index],
+                            height: 25,
+                            width: 40,
+                            onToggle: (v) {
+                              setState(() {
+                                listItems[index].isEnabled = v;
+                                // db.loadData();
+                                // db.info[index] = !db.info[index];
+                                // db.updateDataBase();
+                              });
+                            },
+                          ),
+                        )),
+                    Padding(
+                        padding: EdgeInsets.only(left: 15),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 0),
+                          child: IconButton(
+                            icon: Icon(Icons.delete_rounded),
+                            color: Colors.white,
+                            iconSize: 32,
+                            onPressed: () {
+                              setState(() {
+                                listItems.removeAt(index);
+                              });
+                            },
+                          ),
+                        )),
+                  ],
                 ),
               ]),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) =>
+              const Divider(),
         ),
       ),
     );
