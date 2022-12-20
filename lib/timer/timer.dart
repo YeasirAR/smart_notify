@@ -62,7 +62,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff5fbff),
+      backgroundColor: Color.fromARGB(255, 36, 43, 48),
       body: Column(
         children: [
           Expanded(
@@ -87,15 +87,13 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                           height: 300,
                           child: CupertinoTimerPicker(
                             mode: CupertinoTimerPickerMode.hms,
-                            
                             initialTimerDuration: controller.duration!,
                             onTimerDurationChanged: (time) {
                               setState(() {
                                 controller.duration = time;
                               });
                             },
-                          )
-                          ,
+                          ),
                         ),
                       );
                     }
@@ -105,6 +103,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                     builder: (context, child) => Text(
                       countText,
                       style: TextStyle(
+                        color: Colors.white,
                         fontSize: 60,
                         fontWeight: FontWeight.bold,
                       ),
