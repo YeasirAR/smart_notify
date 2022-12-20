@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../database/round-button.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 class Timer extends StatefulWidget {
@@ -56,3 +58,30 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
     controller.dispose();
     super.dispose();
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xfff5fbff),
+      body: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 300,
+                  height: 300,
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.grey.shade300,
+                    value: progress,
+                    strokeWidth: 6,
+                  ),
+                )
+              )
+          ),
+        ],
+      ),
+    );
+  }
+}
