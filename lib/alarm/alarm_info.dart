@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 class AlarmInfo {
   String title;
-  TimeOfDay time;
+  String time_location;
+  //TimeOfDay time;
+  double textSize;
   bool isEnabled;
-  AlarmInfo(this.title, this.time, this.isEnabled);
+  AlarmInfo(this.title, this.time_location, this.textSize, this.isEnabled);
 }

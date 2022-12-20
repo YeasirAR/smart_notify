@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
 import 'package:smart_notify/alarm/alarm_info.dart';
 import 'package:smart_notify/database/database.dart';
 import 'package:smart_notify/homepage.dart';
@@ -18,6 +19,8 @@ class _AlarmState extends State<Alarm> {
   Database db = Database();
   late int listLength;
   String alarmTitle = 'No Title';
+  String alarmLocation = 'No Location';
+  double alarmRadius = 1;
   TimeOfDay _time = TimeOfDay.now();
 
   @override
@@ -30,7 +33,11 @@ class _AlarmState extends State<Alarm> {
   }
 
   void crateListItem() {
-    listItems.add(AlarmInfo(alarmTitle, _time, true));
+    listItems.add(AlarmInfo(alarmTitle, _time.format(context), 40, true));
+  }
+
+  void crateListItemLocation() {
+    listItems.add(AlarmInfo(alarmTitle, alarmLocation, 20, true));
   }
 
   void createTimeAlarm() async {
@@ -45,6 +52,36 @@ class _AlarmState extends State<Alarm> {
         Navigator.pop(context);
       });
     }
+  }
+
+  void createLocationAlarm() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Color.fromARGB(255, 19, 40, 48),
+          content: OpenStreetMapSearchAndPick(
+              center: LatLong(23.7980746, 90.4490231),
+              buttonColor: Color.fromARGB(255, 37, 54, 68),
+              buttonText: 'Set Current Location',
+              onPicked: (pickedData) {
+                // print(pickedData.latLong.latitude);
+                // print(pickedData.latLong.longitude);
+                // print(pickedData.address);
+                setState(() {
+                  alarmLocation = pickedData.address.substring(0, 20);
+                  crateListItemLocation();
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                });
+              }),
+          title: const Text(
+            "Pick a location",
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+      },
+    );
   }
 
   void createAlarm() {
@@ -71,7 +108,7 @@ class _AlarmState extends State<Alarm> {
                     onChanged: (value) {
                       alarmTitle = value;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         label: Text("Alarm Title",
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
@@ -114,7 +151,7 @@ class _AlarmState extends State<Alarm> {
                           backgroundColor:
                               const Color.fromARGB(255, 60, 83, 99),
                         ),
-                        onPressed: (() => {}),
+                        onPressed: (() => {createLocationAlarm()}),
                         child: const Text('Add Location Based Alarm')),
                   ),
                 ],
@@ -178,7 +215,9 @@ class _AlarmState extends State<Alarm> {
                         child: Padding(
                           padding: const EdgeInsets.only(top: 8),
                           child: Icon(
-                            Icons.timelapse,
+                            listItems[index].textSize == 20
+                                ? Icons.location_city
+                                : Icons.timelapse,
                             size: 30,
                             color: Colors.white,
                           ),
@@ -195,10 +234,14 @@ class _AlarmState extends State<Alarm> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 15),
+                      padding: EdgeInsets.only(
+                          left: 15,
+                          top: listItems[index].textSize == 20 ? 10 : 0),
                       child: Text(
-                        listItems[index].time.format(context),
-                        style: TextStyle(fontSize: 40, color: Colors.white),
+                        listItems[index].time_location,
+                        style: TextStyle(
+                            fontSize: listItems[index].textSize,
+                            color: Colors.white),
                       ),
                     ),
                   ],
