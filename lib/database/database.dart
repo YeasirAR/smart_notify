@@ -7,7 +7,7 @@ class Database {
 
   Database(){
     _myBox = Hive.box('mybox');
-    this.info = _myBox.get("list");
+    //this.info = _myBox.get("list");
   }
 
   void createInitialData() {

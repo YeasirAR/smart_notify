@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
+import 'package:smart_notify/Reminder/Reminder_info.dart';
 import 'package:smart_notify/database/database.dart';
 import 'package:smart_notify/homepage.dart';
-import 'package:smart_notify/reminder/reminder_info.dart';
+
+// import 'createReminder.dart';
 
 class Reminder extends StatefulWidget {
   const Reminder({super.key});
@@ -16,6 +19,8 @@ class _ReminderState extends State<Reminder> {
   Database db = Database();
   late int listLength;
   String ReminderTitle = 'No Title';
+  String ReminderLocation = 'No Location';
+  double ReminderRadius = 1;
   TimeOfDay _time = TimeOfDay.now();
 
   @override
@@ -28,7 +33,11 @@ class _ReminderState extends State<Reminder> {
   }
 
   void crateListItem() {
-    listItems.add(ReminderInfo(ReminderTitle, _time, true));
+    listItems.add(ReminderInfo(ReminderTitle, _time.format(context), 40, true));
+  }
+
+  void crateListItemLocation() {
+    listItems.add(ReminderInfo(ReminderTitle, ReminderLocation, 20, true));
   }
 
   void createTimeReminder() async {
@@ -43,6 +52,36 @@ class _ReminderState extends State<Reminder> {
         Navigator.pop(context);
       });
     }
+  }
+
+  void createLocationReminder() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Color.fromARGB(255, 19, 40, 48),
+          content: OpenStreetMapSearchAndPick(
+              center: LatLong(23.7980746, 90.4490231),
+              buttonColor: Color.fromARGB(255, 37, 54, 68),
+              buttonText: 'Set Current Location',
+              onPicked: (pickedData) {
+                // print(pickedData.latLong.latitude);
+                // print(pickedData.latLong.longitude);
+                // print(pickedData.address);
+                setState(() {
+                  ReminderLocation = pickedData.address.substring(0, 20);
+                  crateListItemLocation();
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                });
+              }),
+          title: const Text(
+            "Pick a location",
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+      },
+    );
   }
 
   void createReminder() {
@@ -60,7 +99,7 @@ class _ReminderState extends State<Reminder> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 20),
                     child: Text(
-                      "ADD REMINDER",
+                      "ADD Reminder",
                       style: TextStyle(color: Colors.white, fontSize: 30),
                     ),
                   ),
@@ -69,7 +108,7 @@ class _ReminderState extends State<Reminder> {
                     onChanged: (value) {
                       ReminderTitle = value;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         label: Text("Reminder Title",
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
@@ -112,7 +151,7 @@ class _ReminderState extends State<Reminder> {
                           backgroundColor:
                               const Color.fromARGB(255, 60, 83, 99),
                         ),
-                        onPressed: (() => {}),
+                        onPressed: (() => {createLocationReminder()}),
                         child: const Text('Add Location Based Reminder')),
                   ),
                 ],
@@ -176,7 +215,9 @@ class _ReminderState extends State<Reminder> {
                         child: Padding(
                           padding: const EdgeInsets.only(top: 8),
                           child: Icon(
-                            Icons.timelapse,
+                            listItems[index].textSize == 20
+                                ? Icons.location_city
+                                : Icons.timelapse,
                             size: 30,
                             color: Colors.white,
                           ),
@@ -193,10 +234,14 @@ class _ReminderState extends State<Reminder> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 15),
+                      padding: EdgeInsets.only(
+                          left: 15,
+                          top: listItems[index].textSize == 20 ? 10 : 0),
                       child: Text(
-                        listItems[index].time.format(context),
-                        style: TextStyle(fontSize: 40, color: Colors.white),
+                        listItems[index].time_location,
+                        style: TextStyle(
+                            fontSize: listItems[index].textSize,
+                            color: Colors.white),
                       ),
                     ),
                   ],
