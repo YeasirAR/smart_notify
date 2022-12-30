@@ -4,13 +4,13 @@ import 'package:smart_notify/database/database.dart';
 import 'homepage.dart';
 
 void main() async {
-  await Hive.initFlutter();
-  var box = await Hive.openBox('mybox');
-  Database db = Database();
-  if (box.get('list') == null) {
-    db.createInitialData();
-  }
-  db.updateDataBase();
+  // await Hive.initFlutter();
+  // var box = await Hive.openBox('mybox');
+  // Database db = Database();
+  // if (box.get('list') == null) {
+  //   db.createInitialData();
+  // }
+  // db.updateDataBase();
   runApp(const MyApp());
 }
 

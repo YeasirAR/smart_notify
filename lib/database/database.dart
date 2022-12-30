@@ -5,13 +5,13 @@ class Database {
 
   late Box _myBox;
 
-  Database(){
-    _myBox = Hive.box('mybox');
+  Database() {
+    // _myBox = Hive.box('mybox');
     //this.info = _myBox.get("list");
   }
 
   void createInitialData() {
-    info = [true, false, false,false];
+    info = [true, false, false, false];
   }
 
   void loadData() {

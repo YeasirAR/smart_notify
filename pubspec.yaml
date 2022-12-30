@@ -44,6 +44,9 @@ dependencies:
   flutter_launcher_icons: "^0.11.0"
   flutter_switch: ^0.3.2
   flutter_ringtone_player: ^3.2.0
+  open_street_map_search_and_pick: ^0.0.15
+  flutter_expandable_fab: ^1.6.1
+  modal_bottom_sheet: ^2.1.2
   # is_first_run: ^1.0.0
 
 dev_dependencies:

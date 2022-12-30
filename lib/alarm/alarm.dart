@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
 import 'package:smart_notify/alarm/alarm_info.dart';
 import 'package:smart_notify/database/database.dart';
@@ -39,7 +41,33 @@ class _AlarmState extends State<Alarm> {
   void crateListItemLocation() {
     listItems.add(AlarmInfo(alarmTitle, alarmLocation, 20, true));
   }
+  void createLocationBasedAlarm() {
+    showBarModalBottomSheet(
+      context: context,
+      backgroundColor: Color.fromARGB(255, 49, 63, 72),
+      builder: (context) => SizedBox(
+        height: 500,
+        child: Container(
+          child: TextButton(
+            child: Text("X"),
+            onPressed: () {
+              dtp();
+            },
+          ),
+        ),
+      ),
+    );
+  }
 
+  void dtp() {}
+
+  void createTimeBasedAlarm() {
+    showBarModalBottomSheet(
+      context: context,
+      backgroundColor: Color.fromARGB(255, 49, 63, 72),
+      builder: (context) => Container(),
+    );
+  }
   void createTimeAlarm() async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
@@ -173,18 +201,46 @@ class _AlarmState extends State<Alarm> {
     );
   }
 
+  final _key = GlobalKey<ExpandableFabState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 33, 41, 46),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          createAlarm();
-        },
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
+      floatingActionButtonLocation: ExpandableFab.location,
+      floatingActionButton: ExpandableFab(
+        backgroundColor: Colors.blueGrey,
+        closeButtonStyle: const ExpandableFabCloseButtonStyle(
+            backgroundColor: Colors.red,
+            child: Icon(Icons.close, color: Colors.white)),
+        onOpen: () {},
+        key: _key,
+        children: [
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 60, 83, 99),
+              ),
+              onPressed: () {
+                createTimeBasedAlarm();
+                _key.currentState?.toggle();
+              },
+              child: const Text("Add Time Based Alarm",
+                  style: TextStyle(fontSize: 15))),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 60, 83, 99),
+              ),
+              onPressed: () {
+                createLocationBasedAlarm();
+                _key.currentState?.toggle();
+              },
+              child: const Text(
+                "Location  Based  Alarm",
+                style: TextStyle(fontSize: 15),
+              )),
+        ],
+        child: const Icon(Icons.add, color: Colors.white),
+        type: ExpandableFabType.up,
+        distance: 50,
       ),
       body: Padding(
         padding: const EdgeInsets.all(25),
@@ -197,95 +253,97 @@ class _AlarmState extends State<Alarm> {
                 color: const Color.fromARGB(255, 29, 62, 75),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Row(children: [
-                Column(
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                        padding: EdgeInsets.only(left: 15),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 0),
-                          child: Icon(
-                            Icons.text_snippet_outlined,
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(left: 15),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Icon(
-                            listItems[index].textSize == 20
-                                ? Icons.location_city
-                                : Icons.timelapse,
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                        )),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 15),
-                      child: Text(
-                        listItems[index].title,
-                        style: TextStyle(fontSize: 25, color: Colors.white),
-                      ),
+                    Column(
+                      children: [
+                        Padding(
+                            padding: EdgeInsets.only(left: 15),
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 0),
+                              child: Icon(
+                                Icons.text_snippet_outlined,
+                                size: 30,
+                                color: Colors.white,
+                              ),
+                            )),
+                        Padding(
+                            padding: EdgeInsets.only(left: 15),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Icon(
+                                listItems[index].textSize == 20
+                                    ? Icons.location_city
+                                    : Icons.timelapse,
+                                size: 30,
+                                color: Colors.white,
+                              ),
+                            )),
+                      ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: 15,
-                          top: listItems[index].textSize == 20 ? 10 : 0),
-                      child: Text(
-                        listItems[index].time_location,
-                        style: TextStyle(
-                            fontSize: listItems[index].textSize,
-                            color: Colors.white),
-                      ),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 15),
+                          child: Text(
+                            listItems[index].title,
+                            style: TextStyle(fontSize: 25, color: Colors.white),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 15,
+                              top: listItems[index].textSize == 20 ? 10 : 0),
+                          child: Text(
+                            listItems[index].time_location,
+                            style: TextStyle(
+                                fontSize: listItems[index].textSize,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 7),
-                          child: FlutterSwitch(
-                            value: listItems[index].isEnabled,
-                            // value: db.info[index],
-                            height: 25,
-                            width: 40,
-                            onToggle: (v) {
-                              setState(() {
-                                listItems[index].isEnabled = v;
-                                // db.loadData();
-                                // db.info[index] = !db.info[index];
-                                // db.updateDataBase();
-                              });
-                            },
-                          ),
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(left: 15),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 0),
-                          child: IconButton(
-                            icon: Icon(Icons.delete_rounded),
-                            color: Colors.white,
-                            iconSize: 32,
-                            onPressed: () {
-                              setState(() {
-                                listItems.removeAt(index);
-                              });
-                            },
-                          ),
-                        )),
-                  ],
-                ),
-              ]),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                            padding: const EdgeInsets.only(left: 15),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 7),
+                              child: FlutterSwitch(
+                                value: listItems[index].isEnabled,
+                                // value: db.info[index],
+                                height: 25,
+                                width: 40,
+                                onToggle: (v) {
+                                  setState(() {
+                                    listItems[index].isEnabled = v;
+                                    // db.loadData();
+                                    // db.info[index] = !db.info[index];
+                                    // db.updateDataBase();
+                                  });
+                                },
+                              ),
+                            )),
+                        Padding(
+                            padding: EdgeInsets.only(left: 15),
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 0),
+                              child: IconButton(
+                                icon: Icon(Icons.delete_rounded),
+                                color: Colors.white,
+                                iconSize: 32,
+                                onPressed: () {
+                                  setState(() {
+                                    listItems.removeAt(index);
+                                  });
+                                },
+                              ),
+                            )),
+                      ],
+                    ),
+                  ]),
             );
           },
           separatorBuilder: (BuildContext context, int index) =>
