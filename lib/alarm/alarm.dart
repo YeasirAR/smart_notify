@@ -291,7 +291,7 @@ class _AlarmState extends State<Alarm> {
       setState(() {
         _time = newTime;
         crateListItem();
-        showNotification(join(DateTime.now(), newTime));
+        showNotification(join(DateTime.now(), newTime), db.alarmID);
         Navigator.pop(context);
       });
     }
@@ -536,6 +536,10 @@ class _AlarmState extends State<Alarm> {
                                 onToggle: (v) {
                                   setState(() {
                                     db.alarmList[index][3] = v;
+                                    if (!v) {
+                                      cancelNotification(
+                                          db.alarmList[index][8]);
+                                    }
                                     // db.loadData();
                                     // db.info[index] = !db.info[index];
                                     // db.updateDataBase();
@@ -553,6 +557,7 @@ class _AlarmState extends State<Alarm> {
                                 iconSize: 32,
                                 onPressed: () {
                                   setState(() {
+                                    cancelNotification(db.alarmList[index][8]);
                                     db.alarmList.removeAt(index);
                                     db.updateDataBaseAlarm();
                                     // db.loadData();
@@ -572,29 +577,33 @@ class _AlarmState extends State<Alarm> {
     );
   }
 
-  void showNotification(DateTime scheduleDate) async {
-    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-        "OPEN UP ", "ITS FCUKING FBI",
-        priority: Priority.max, importance: Importance.max);
+  void showNotification(DateTime scheduleDate, int id) async {
+    AndroidNotificationDetails androidDetails =
+        const AndroidNotificationDetails("OPEN UP ", "ITS FCUKING FBI",
+            priority: Priority.max, importance: Importance.max);
 
-    DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+    DarwinNotificationDetails iosDetails = const DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
     );
 
-    NotificationDetails notiDetails =
+    NotificationDetails notificationDetails =
         NotificationDetails(android: androidDetails, iOS: iosDetails);
 
     // DateTime scheduleDate = DateTime.now().add(Duration(seconds: 5));
     // DateTime scheduleDate = DateTime.now().add(Duration(seconds: 5));
 
-    await notificationsPlugin.zonedSchedule(db.alarmID, "OPEN UP ",
-        "ITS FCUKING FBI", TZDateTime.from(scheduleDate, local), notiDetails,
+    await notificationsPlugin.zonedSchedule(id, "OPEN UP ", "ITS FCUKING FBI",
+        TZDateTime.from(scheduleDate, local), notificationDetails,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.wallClockTime,
         androidAllowWhileIdle: true,
         payload: "notification-payload");
+  }
+
+  void cancelNotification(int id) {
+    notificationsPlugin.cancel(id);
   }
 
   // void checkForNotification() async {
