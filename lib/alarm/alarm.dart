@@ -53,8 +53,8 @@ class _AlarmState extends State<Alarm> {
           padding: const EdgeInsets.all(15),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 20),
                 child: Text(
                   "ADD LOCATION ALARM",
                   style: TextStyle(color: Colors.white, fontSize: 30),
@@ -66,6 +66,10 @@ class _AlarmState extends State<Alarm> {
                   alarmTitle = value;
                 },
                 decoration: const InputDecoration(
+                    // icon: Icon(
+                    //   Icons.text_fields,
+                    //   color: Colors.white,
+                    // ),
                     label: Text("Alarm Title",
                         style: TextStyle(color: Colors.white, fontSize: 20)),
                     disabledBorder: OutlineInputBorder(
@@ -84,11 +88,15 @@ class _AlarmState extends State<Alarm> {
               Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: TextFormField(
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                   onChanged: (value) {
                     alarmTitle = value;
                   },
                   decoration: const InputDecoration(
+                      // icon: Icon(
+                      //   Icons.location_city,
+                      //   color: Colors.white,
+                      // ),
                       label: Text("Alarm Radius",
                           style: TextStyle(color: Colors.white, fontSize: 20)),
                       disabledBorder: OutlineInputBorder(
@@ -113,7 +121,7 @@ class _AlarmState extends State<Alarm> {
                   padding: const EdgeInsets.only(top: 15, left: 2, right: 2),
                   child: OpenStreetMapSearchAndPick(
                     center: LatLong(23.7980746, 90.4490231),
-                    buttonColor: Color.fromARGB(255, 37, 54, 68),
+                    buttonColor: const Color.fromARGB(255, 37, 54, 68),
                     buttonText: 'Set Current Location',
                     onPicked: (pickedData) {
                       // print(pickedData.latLong.latitude);
@@ -141,56 +149,83 @@ class _AlarmState extends State<Alarm> {
     showBarModalBottomSheet(
         context: context,
         backgroundColor: Color.fromARGB(255, 49, 63, 72),
-        builder: (context) => Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Text(
-                    "ADD ALARM",
-                    style: TextStyle(color: Colors.white, fontSize: 30),
-                  ),
-                ),
-                TextFormField(
-                  style: TextStyle(color: Colors.white),
-                  onChanged: (value) {
-                    alarmTitle = value;
-                  },
-                  decoration: const InputDecoration(
-                      label: Text("Alarm Title",
-                          style: TextStyle(color: Colors.white, fontSize: 20)),
-                      disabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white)),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white)),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(width: 3, color: Colors.white)),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white)),
-                      hintText: 'Enter alarm title',
-                      hintStyle: TextStyle(
-                          color: Color.fromARGB(255, 150, 148, 148),
-                          fontSize: 20)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 5),
-                  child: SizedBox(
-                    width: 500,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 60, 83, 99),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            //Navigator.pop(context);
-                            createTimeAlarm();
-                          });
+        builder: (context) => SizedBox(
+              height: 400,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                      child: Text(
+                        "ADD ALARM",
+                        style: TextStyle(color: Colors.white, fontSize: 30),
+                      ),
+                    ),
+                    TextFormField(
+                      style: const TextStyle(color: Colors.white),
+                      onChanged: (value) {
+                        alarmTitle = value;
+                      },
+                      decoration: const InputDecoration(
+                          icon: Icon(Icons.text_fields, color: Colors.white),
+                          label: Text("Alarm Title",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20)),
+                          disabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white)),
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white)),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(width: 3, color: Colors.white)),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white)),
+                          hintText: 'Enter alarm title',
+                          hintStyle: TextStyle(
+                              color: Color.fromARGB(255, 150, 148, 148),
+                              fontSize: 20)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: TextFormField(
+                        style: const TextStyle(color: Colors.white),
+                        onChanged: (value) {
+                          alarmTitle = value;
                         },
-                        child: const Text('Add Time Based Alarm')),
-                  ),
+                        focusNode: FocusNode(
+                            canRequestFocus: false,
+                            descendantsAreFocusable: false),
+                        readOnly: true,
+                        onTap: () {
+                          createTimeAlarm();
+                        },
+                        decoration: const InputDecoration(
+                            icon: Icon(
+                              Icons.date_range,
+                              color: Colors.white,
+                            ),
+                            label: Text("Pick Time",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20)),
+                            disabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white)),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(width: 3, color: Colors.white)),
+                            border: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white)),
+                            hintText: 'Enter alarm time',
+                            hintStyle: TextStyle(
+                                color: Color.fromARGB(255, 150, 148, 148),
+                                fontSize: 20)),
+                      ),
+                    )
+                  ],
                 ),
-              ],
+              ),
             ));
   }
 
@@ -203,7 +238,7 @@ class _AlarmState extends State<Alarm> {
       setState(() {
         _time = newTime;
         crateListItem();
-        // Navigator.pop(context);
+        Navigator.pop(context);
       });
     }
   }
@@ -213,10 +248,10 @@ class _AlarmState extends State<Alarm> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Color.fromARGB(255, 19, 40, 48),
+          backgroundColor: const Color.fromARGB(255, 19, 40, 48),
           content: OpenStreetMapSearchAndPick(
               center: LatLong(23.7980746, 90.4490231),
-              buttonColor: Color.fromARGB(255, 37, 54, 68),
+              buttonColor: const Color.fromARGB(255, 37, 54, 68),
               buttonText: 'Set Current Location',
               onPicked: (pickedData) {
                 // print(pickedData.latLong.latitude);
@@ -250,15 +285,15 @@ class _AlarmState extends State<Alarm> {
               width: 400,
               child: Column(
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 20),
                     child: Text(
                       "ADD ALARM",
                       style: TextStyle(color: Colors.white, fontSize: 30),
                     ),
                   ),
                   TextFormField(
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                     onChanged: (value) {
                       alarmTitle = value;
                     },
@@ -292,7 +327,7 @@ class _AlarmState extends State<Alarm> {
                           onPressed: () {
                             setState(() {
                               //Navigator.pop(context);
-                              createTimeAlarm();
+                              createTimeBasedAlarm();
                             });
                           },
                           child: const Text('Add Time Based Alarm')),
@@ -347,7 +382,7 @@ class _AlarmState extends State<Alarm> {
               ),
               onPressed: () {
                 alarmTitle = "Time Alarm";
-                createTimeAlarm();
+                createTimeBasedAlarm();
                 _key.currentState?.toggle();
               },
               child: const Text("Add Time Based Alarm",
@@ -386,10 +421,10 @@ class _AlarmState extends State<Alarm> {
                   children: [
                     Column(
                       children: [
-                        Padding(
+                        const Padding(
                             padding: EdgeInsets.only(left: 15),
                             child: Padding(
-                              padding: const EdgeInsets.only(bottom: 0),
+                              padding: EdgeInsets.only(bottom: 0),
                               child: Icon(
                                 Icons.text_snippet_outlined,
                                 size: 30,
