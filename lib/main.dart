@@ -9,7 +9,7 @@ void main() async {
   // List<dynamic> alarmList = [];
   // List<AlarmInfo> remList = [];
   var alarmDB = await Hive.openBox('alarmBox');
-  var remDB = await Hive.openBox('remDbBox');
+  var remDB = await Hive.openBox('reminderBox');
   // if (alarmDB.get("list") == null) {
   //   alarmDB.putAt(0, []);
   // }

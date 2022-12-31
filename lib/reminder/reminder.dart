@@ -9,7 +9,6 @@ import 'package:smart_notify/database/database.dart';
 import 'package:smart_notify/database/nav_icons.dart';
 import 'package:smart_notify/homepage.dart';
 
-
 class Reminder extends StatefulWidget {
   const Reminder({super.key});
 
@@ -24,7 +23,7 @@ class _ReminderState extends State<Reminder> {
   String alarmLocation = 'No Location';
   double alarmRadius = 1;
   TimeOfDay _time = TimeOfDay.now();
-  final alarmDB = Hive.box('alarmBox');
+  final reminderDB = Hive.box('reminderBox');
   DataBase db = DataBase();
   @override
   void initState() {
@@ -32,10 +31,10 @@ class _ReminderState extends State<Reminder> {
     // listItems.add(AlarmInfo("SAD CLASS", "11:30 AM", false));
     // listItems.add(AlarmInfo("MAD CLASS", "10:00 AM", true));
     //listLength = listItems.length;
-    if (alarmDB.get("list") == null) {
-      db.createInitialData();
+    if (reminderDB.get("list") == null) {
+      db.createInitialDataReminder();
     } else {
-      db.loadData();
+      db.loadDataReminder();
     }
     // there already exists data
     // db.updateDataBase();
@@ -45,19 +44,19 @@ class _ReminderState extends State<Reminder> {
   }
 
   void crateListItem() {
-    db.alarmList.add([alarmTitle, _time.format(context), 40, true]);
+    db.reminderList.add([alarmTitle, _time.format(context), 40, true]);
     // alarmDB.put("list", listItems);
     //alarmDB.put("list", listItems);
     //print(alarmDB.get("list"));
-    db.updateDataBase();
+    db.updateDataBaseReminder();
     // db.loadData();
   }
 
   void crateListItemLocation() {
-    db.alarmList.add([alarmTitle, alarmLocation, 20, true]);
+    db.reminderList.add([alarmTitle, alarmLocation, 20, true]);
     // alarmDB.put("list", listItems);
     // alarmDB.put("list", listItems);
-    db.updateDataBase();
+    db.updateDataBaseReminder();
     // db.loadData();
     // print(alarmDB.get("list"));
   }
@@ -427,7 +426,7 @@ class _ReminderState extends State<Reminder> {
       body: Padding(
         padding: const EdgeInsets.all(25),
         child: ListView.separated(
-          itemCount: db.alarmList.length,
+          itemCount: db.reminderList.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
               height: 80,
@@ -455,7 +454,7 @@ class _ReminderState extends State<Reminder> {
                             child: Padding(
                               padding: const EdgeInsets.only(top: 8),
                               child: Icon(
-                                db.alarmList[index][2].toDouble() == 20
+                                db.reminderList[index][2].toDouble() == 20
                                     ? Icons.location_pin
                                     : NavIcons.alarm,
                                 size: 30,
@@ -469,18 +468,18 @@ class _ReminderState extends State<Reminder> {
                         Padding(
                           padding: EdgeInsets.only(left: 15),
                           child: Text(
-                            db.alarmList[index][0],
+                            db.reminderList[index][0],
                             style: TextStyle(fontSize: 25, color: Colors.white),
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.only(
                               left: 15,
-                              top: db.alarmList[index][2] == 20 ? 10 : 0),
+                              top: db.reminderList[index][2] == 20 ? 10 : 0),
                           child: Text(
-                            db.alarmList[index][1],
+                            db.reminderList[index][1],
                             style: TextStyle(
-                                fontSize: db.alarmList[index][2].toDouble(),
+                                fontSize: db.reminderList[index][2].toDouble(),
                                 color: Colors.white),
                           ),
                         ),
@@ -494,13 +493,13 @@ class _ReminderState extends State<Reminder> {
                             child: Padding(
                               padding: const EdgeInsets.only(top: 7),
                               child: FlutterSwitch(
-                                value: db.alarmList[index][3],
+                                value: db.reminderList[index][3],
                                 // value: db.info[index],
                                 height: 25,
                                 width: 40,
                                 onToggle: (v) {
                                   setState(() {
-                                    db.alarmList[index][3] = v;
+                                    db.reminderList[index][3] = v;
                                     // db.loadData();
                                     // db.info[index] = !db.info[index];
                                     // db.updateDataBase();
@@ -518,8 +517,8 @@ class _ReminderState extends State<Reminder> {
                                 iconSize: 32,
                                 onPressed: () {
                                   setState(() {
-                                    db.alarmList.removeAt(index);
-                                    db.updateDataBase();
+                                    db.reminderList.removeAt(index);
+                                    db.updateDataBaseReminder();
                                     // db.loadData();
                                   });
                                 },

@@ -34,9 +34,9 @@ class _AlarmState extends State<Alarm> {
     // listItems.add(AlarmInfo("MAD CLASS", "10:00 AM", true));
     //listLength = listItems.length;
     if (alarmDB.get("list") == null) {
-      db.createInitialData();
+      db.createInitialDataAlarm();
     } else {
-      db.loadData();
+      db.loadDataAlarm();
     }
     // there already exists data
     // db.updateDataBase();
@@ -50,7 +50,7 @@ class _AlarmState extends State<Alarm> {
     // alarmDB.put("list", listItems);
     //alarmDB.put("list", listItems);
     //print(alarmDB.get("list"));
-    db.updateDataBase();
+    db.updateDataBaseAlarm();
     // db.loadData();
   }
 
@@ -58,7 +58,7 @@ class _AlarmState extends State<Alarm> {
     db.alarmList.add([alarmTitle, alarmLocation, 20, true]);
     // alarmDB.put("list", listItems);
     // alarmDB.put("list", listItems);
-    db.updateDataBase();
+    db.updateDataBaseAlarm();
     // db.loadData();
     // print(alarmDB.get("list"));
   }
@@ -520,7 +520,7 @@ class _AlarmState extends State<Alarm> {
                                 onPressed: () {
                                   setState(() {
                                     db.alarmList.removeAt(index);
-                                    db.updateDataBase();
+                                    db.updateDataBaseAlarm();
                                     // db.loadData();
                                   });
                                 },
