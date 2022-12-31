@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:hive/hive.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
 import 'package:smart_notify/alarm/alarm_info.dart';
@@ -18,29 +19,48 @@ class Alarm extends StatefulWidget {
 }
 
 class _AlarmState extends State<Alarm> {
-  List<AlarmInfo> listItems = [];
-  Database db = Database();
+  List listItems = [];
   late int listLength;
   String alarmTitle = 'No Title';
   String alarmLocation = 'No Location';
   double alarmRadius = 1;
   TimeOfDay _time = TimeOfDay.now();
-
+  final alarmDB = Hive.box('alarmBox');
+  DataBase db = DataBase();
   @override
   void initState() {
     // listItems.add(AlarmInfo("FYDP CLASS", "12:00 PM", true));
     // listItems.add(AlarmInfo("SAD CLASS", "11:30 AM", false));
     // listItems.add(AlarmInfo("MAD CLASS", "10:00 AM", true));
     //listLength = listItems.length;
+    if (alarmDB.get("list") == null) {
+      db.createInitialData();
+    } else {
+      db.loadData();
+    }
+    // there already exists data
+    // db.updateDataBase();
+    //db.loadData();
+
     super.initState();
   }
 
   void crateListItem() {
-    listItems.add(AlarmInfo(alarmTitle, _time.format(context), 40, true));
+    db.alarmList.add([alarmTitle, _time.format(context), 40, true]);
+    // alarmDB.put("list", listItems);
+    //alarmDB.put("list", listItems);
+    //print(alarmDB.get("list"));
+    db.updateDataBase();
+    // db.loadData();
   }
 
   void crateListItemLocation() {
-    listItems.add(AlarmInfo(alarmTitle, alarmLocation, 20, true));
+    db.alarmList.add([alarmTitle, alarmLocation, 20, true]);
+    // alarmDB.put("list", listItems);
+    // alarmDB.put("list", listItems);
+    db.updateDataBase();
+    // db.loadData();
+    // print(alarmDB.get("list"));
   }
 
   void createLocationBasedAlarm() {
@@ -408,7 +428,7 @@ class _AlarmState extends State<Alarm> {
       body: Padding(
         padding: const EdgeInsets.all(25),
         child: ListView.separated(
-          itemCount: listItems.length,
+          itemCount: db.alarmList.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
               height: 80,
@@ -436,7 +456,7 @@ class _AlarmState extends State<Alarm> {
                             child: Padding(
                               padding: const EdgeInsets.only(top: 8),
                               child: Icon(
-                                listItems[index].textSize == 20
+                                db.alarmList[index][2].toDouble() == 20
                                     ? Icons.location_pin
                                     : NavIcons.alarm,
                                 size: 30,
@@ -450,18 +470,18 @@ class _AlarmState extends State<Alarm> {
                         Padding(
                           padding: EdgeInsets.only(left: 15),
                           child: Text(
-                            listItems[index].title,
+                            db.alarmList[index][0],
                             style: TextStyle(fontSize: 25, color: Colors.white),
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.only(
                               left: 15,
-                              top: listItems[index].textSize == 20 ? 10 : 0),
+                              top: db.alarmList[index][2] == 20 ? 10 : 0),
                           child: Text(
-                            listItems[index].time_location,
+                            db.alarmList[index][1],
                             style: TextStyle(
-                                fontSize: listItems[index].textSize,
+                                fontSize: db.alarmList[index][2].toDouble(),
                                 color: Colors.white),
                           ),
                         ),
@@ -475,13 +495,13 @@ class _AlarmState extends State<Alarm> {
                             child: Padding(
                               padding: const EdgeInsets.only(top: 7),
                               child: FlutterSwitch(
-                                value: listItems[index].isEnabled,
+                                value: db.alarmList[index][3],
                                 // value: db.info[index],
                                 height: 25,
                                 width: 40,
                                 onToggle: (v) {
                                   setState(() {
-                                    listItems[index].isEnabled = v;
+                                    db.alarmList[index][3] = v;
                                     // db.loadData();
                                     // db.info[index] = !db.info[index];
                                     // db.updateDataBase();
@@ -499,7 +519,9 @@ class _AlarmState extends State<Alarm> {
                                 iconSize: 32,
                                 onPressed: () {
                                   setState(() {
-                                    listItems.removeAt(index);
+                                    db.alarmList.removeAt(index);
+                                    db.updateDataBase();
+                                    // db.loadData();
                                   });
                                 },
                               ),

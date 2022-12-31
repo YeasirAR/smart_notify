@@ -1,24 +1,26 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
-class Database {
-  List info = [];
+class DataBase {
+  List<dynamic> alarmList = [];
 
-  late Box _myBox;
+  // reference our box
+  final _myBox = Hive.box('alarmBox');
 
-  Database() {
-    // _myBox = Hive.box('mybox');
-    //this.info = _myBox.get("list");
-  }
-
+  // run this method if this is the 1st time ever opening this app
   void createInitialData() {
-    info = [true, false, false, false];
+    alarmList = [
+      ["Alarm Title", "9:45 AM", 40, true],
+      ["Alarm Title", "9:45 AM", 40, true],
+    ];
   }
 
+  // load the data from database
   void loadData() {
-    info = _myBox.get("list");
+    alarmList = _myBox.get("list");
   }
 
+  // update the database
   void updateDataBase() {
-    _myBox.put("list", info);
+    _myBox.put("list", alarmList);
   }
 }
