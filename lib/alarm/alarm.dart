@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:hive/hive.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -8,7 +9,9 @@ import 'package:smart_notify/alarm/alarm_info.dart';
 import 'package:smart_notify/database/database.dart';
 import 'package:smart_notify/database/nav_icons.dart';
 import 'package:smart_notify/homepage.dart';
+import 'package:timezone/timezone.dart';
 
+import '../main.dart';
 import 'createAlarm.dart';
 
 class Alarm extends StatefulWidget {
@@ -23,17 +26,19 @@ class _AlarmState extends State<Alarm> {
   late int listLength;
   String alarmTitle = 'No Title';
   String alarmLocation = 'No Location';
-  double alarmRadius = 1;
+  double alarmRadius = 0.5;
   TimeOfDay _time = TimeOfDay.now();
   final alarmDB = Hive.box('alarmBox');
   DataBase db = DataBase();
+  late double latitude, longitude;
+  //late int alarmID;
   @override
   void initState() {
     // listItems.add(AlarmInfo("FYDP CLASS", "12:00 PM", true));
     // listItems.add(AlarmInfo("SAD CLASS", "11:30 AM", false));
     // listItems.add(AlarmInfo("MAD CLASS", "10:00 AM", true));
     //listLength = listItems.length;
-    if (alarmDB.get("list") == null) {
+    if (alarmDB.get("id") == null) {
       db.createInitialDataAlarm();
     } else {
       db.loadDataAlarm();
@@ -46,7 +51,18 @@ class _AlarmState extends State<Alarm> {
   }
 
   void crateListItem() {
-    db.alarmList.add([alarmTitle, _time.format(context), 40, true]);
+    db.alarmID++;
+    db.alarmList.add([
+      alarmTitle,
+      _time.format(context),
+      40,
+      true,
+      false,
+      0,
+      0,
+      0,
+      db.alarmID
+    ]);
     // alarmDB.put("list", listItems);
     //alarmDB.put("list", listItems);
     //print(alarmDB.get("list"));
@@ -55,7 +71,18 @@ class _AlarmState extends State<Alarm> {
   }
 
   void crateListItemLocation() {
-    db.alarmList.add([alarmTitle, alarmLocation, 20, true]);
+    db.alarmID++;
+    db.alarmList.add([
+      alarmTitle,
+      alarmLocation,
+      20,
+      true,
+      true,
+      latitude,
+      longitude,
+      alarmRadius,
+      db.alarmID
+    ]);
     // alarmDB.put("list", listItems);
     // alarmDB.put("list", listItems);
     db.updateDataBaseAlarm();
@@ -148,6 +175,8 @@ class _AlarmState extends State<Alarm> {
                       // print(pickedData.latLong.longitude);
                       // print(pickedData.address);
                       setState(() {
+                        latitude = pickedData.latLong.latitude;
+                        longitude = pickedData.latLong.longitude;
                         alarmLocation = pickedData.address.substring(0, 20);
                         crateListItemLocation();
                         Navigator.pop(context);
@@ -164,7 +193,6 @@ class _AlarmState extends State<Alarm> {
     );
   }
 
-  void dtp() {}
   void createTimeBasedAlarm() {
     showBarModalBottomSheet(
         context: context,
@@ -249,6 +277,11 @@ class _AlarmState extends State<Alarm> {
             ));
   }
 
+  DateTime join(DateTime date, TimeOfDay time) {
+    return new DateTime(
+        date.year, date.month, date.day, time.hour, time.minute);
+  }
+
   void createTimeAlarm() async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
@@ -258,6 +291,7 @@ class _AlarmState extends State<Alarm> {
       setState(() {
         _time = newTime;
         crateListItem();
+        showNotification(join(DateTime.now(), newTime));
         Navigator.pop(context);
       });
     }
@@ -537,4 +571,44 @@ class _AlarmState extends State<Alarm> {
       ),
     );
   }
+
+  void showNotification(DateTime scheduleDate) async {
+    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+        "OPEN UP ", "ITS FCUKING FBI",
+        priority: Priority.max, importance: Importance.max);
+
+    DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    NotificationDetails notiDetails =
+        NotificationDetails(android: androidDetails, iOS: iosDetails);
+
+    // DateTime scheduleDate = DateTime.now().add(Duration(seconds: 5));
+    // DateTime scheduleDate = DateTime.now().add(Duration(seconds: 5));
+
+    await notificationsPlugin.zonedSchedule(db.alarmID, "OPEN UP ",
+        "ITS FCUKING FBI", TZDateTime.from(scheduleDate, local), notiDetails,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.wallClockTime,
+        androidAllowWhileIdle: true,
+        payload: "notification-payload");
+  }
+
+  // void checkForNotification() async {
+  //   NotificationAppLaunchDetails? details =
+  //       await notificationsPlugin.getNotificationAppLaunchDetails();
+
+  //   if (details != null) {
+  //     if (details.didNotificationLaunchApp) {
+  //       NotificationResponse? response = details.notificationResponse;
+
+  //       if (response != null) {
+  //         String? payload = response.payload;
+  //       }
+  //     }
+  //   }
+  // }
 }

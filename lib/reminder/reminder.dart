@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:hive/hive.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
-import 'package:smart_notify/alarm/alarm_info.dart';
+import 'package:smart_notify/Reminder/Reminder_info.dart';
 import 'package:smart_notify/database/database.dart';
 import 'package:smart_notify/database/nav_icons.dart';
 import 'package:smart_notify/homepage.dart';
+import 'package:timezone/timezone.dart';
+
+import '../main.dart';
 
 class Reminder extends StatefulWidget {
   const Reminder({super.key});
@@ -19,19 +23,21 @@ class Reminder extends StatefulWidget {
 class _ReminderState extends State<Reminder> {
   List listItems = [];
   late int listLength;
-  String alarmTitle = 'No Title';
-  String alarmLocation = 'No Location';
-  double alarmRadius = 1;
+  String reminderTitle = 'No Title';
+  String reminderLocation = 'No Location';
+  double reminderRadius = 0.5;
   TimeOfDay _time = TimeOfDay.now();
-  final reminderDB = Hive.box('reminderBox');
+  final reminderDB = Hive.box('ReminderBox');
   DataBase db = DataBase();
+  late double latitude, longitude;
+  //late int ReminderID;
   @override
   void initState() {
-    // listItems.add(AlarmInfo("FYDP CLASS", "12:00 PM", true));
-    // listItems.add(AlarmInfo("SAD CLASS", "11:30 AM", false));
-    // listItems.add(AlarmInfo("MAD CLASS", "10:00 AM", true));
+    // listItems.add(ReminderInfo("FYDP CLASS", "12:00 PM", true));
+    // listItems.add(ReminderInfo("SAD CLASS", "11:30 AM", false));
+    // listItems.add(ReminderInfo("MAD CLASS", "10:00 AM", true));
     //listLength = listItems.length;
-    if (reminderDB.get("list") == null) {
+    if (reminderDB.get("id") == null) {
       db.createInitialDataReminder();
     } else {
       db.loadDataReminder();
@@ -44,24 +50,46 @@ class _ReminderState extends State<Reminder> {
   }
 
   void crateListItem() {
-    db.reminderList.add([alarmTitle, _time.format(context), 40, true]);
-    // alarmDB.put("list", listItems);
-    //alarmDB.put("list", listItems);
-    //print(alarmDB.get("list"));
+    db.reminderID++;
+    db.reminderList.add([
+      reminderTitle,
+      _time.format(context),
+      40,
+      true,
+      false,
+      0,
+      0,
+      0,
+      db.reminderID
+    ]);
+    // ReminderDB.put("list", listItems);
+    //ReminderDB.put("list", listItems);
+    //print(ReminderDB.get("list"));
     db.updateDataBaseReminder();
     // db.loadData();
   }
 
   void crateListItemLocation() {
-    db.reminderList.add([alarmTitle, alarmLocation, 20, true]);
-    // alarmDB.put("list", listItems);
-    // alarmDB.put("list", listItems);
+    db.reminderID++;
+    db.reminderList.add([
+      reminderTitle,
+      reminderLocation,
+      20,
+      true,
+      true,
+      latitude,
+      longitude,
+      reminderRadius,
+      db.reminderID
+    ]);
+    // ReminderDB.put("list", listItems);
+    // ReminderDB.put("list", listItems);
     db.updateDataBaseReminder();
     // db.loadData();
-    // print(alarmDB.get("list"));
+    // print(ReminderDB.get("list"));
   }
 
-  void createLocationBasedAlarm() {
+  void createLocationBasedReminder() {
     showBarModalBottomSheet(
       context: context,
       backgroundColor: Color.fromARGB(255, 49, 63, 72),
@@ -74,21 +102,21 @@ class _ReminderState extends State<Reminder> {
               const Padding(
                 padding: EdgeInsets.only(bottom: 20),
                 child: Text(
-                  "ADD LOCATION ALARM",
+                  "ADD LOCATION Reminder",
                   style: TextStyle(color: Colors.white, fontSize: 30),
                 ),
               ),
               TextFormField(
                 style: TextStyle(color: Colors.white),
                 onChanged: (value) {
-                  alarmTitle = value;
+                  reminderTitle = value;
                 },
                 decoration: const InputDecoration(
                     // icon: Icon(
                     //   Icons.text_fields,
                     //   color: Colors.white,
                     // ),
-                    label: Text("Alarm Title",
+                    label: Text("Reminder Title",
                         style: TextStyle(color: Colors.white, fontSize: 20)),
                     disabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white)),
@@ -98,7 +126,7 @@ class _ReminderState extends State<Reminder> {
                         borderSide: BorderSide(width: 3, color: Colors.white)),
                     border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white)),
-                    hintText: 'Enter alarm title',
+                    hintText: 'Enter Reminder title',
                     hintStyle: TextStyle(
                         color: Color.fromARGB(255, 150, 148, 148),
                         fontSize: 20)),
@@ -108,14 +136,14 @@ class _ReminderState extends State<Reminder> {
                 child: TextFormField(
                   style: const TextStyle(color: Colors.white),
                   onChanged: (value) {
-                    alarmTitle = value;
+                    reminderTitle = value;
                   },
                   decoration: const InputDecoration(
                       // icon: Icon(
                       //   Icons.location_city,
                       //   color: Colors.white,
                       // ),
-                      label: Text("Alarm Radius",
+                      label: Text("Reminder Radius",
                           style: TextStyle(color: Colors.white, fontSize: 20)),
                       disabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white)),
@@ -126,7 +154,7 @@ class _ReminderState extends State<Reminder> {
                               BorderSide(width: 3, color: Colors.white)),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white)),
-                      hintText: 'Enter alarm radius in Km',
+                      hintText: 'Enter Reminder radius in Km',
                       hintStyle: TextStyle(
                           color: Color.fromARGB(255, 150, 148, 148),
                           fontSize: 20)),
@@ -146,7 +174,9 @@ class _ReminderState extends State<Reminder> {
                       // print(pickedData.latLong.longitude);
                       // print(pickedData.address);
                       setState(() {
-                        alarmLocation = pickedData.address.substring(0, 20);
+                        latitude = pickedData.latLong.latitude;
+                        longitude = pickedData.latLong.longitude;
+                        reminderLocation = pickedData.address.substring(0, 20);
                         crateListItemLocation();
                         Navigator.pop(context);
                         // Navigator.pop(context);
@@ -162,8 +192,7 @@ class _ReminderState extends State<Reminder> {
     );
   }
 
-  void dtp() {}
-  void createTimeBasedAlarm() {
+  void createTimeBasedReminder() {
     showBarModalBottomSheet(
         context: context,
         backgroundColor: Color.fromARGB(255, 49, 63, 72),
@@ -176,18 +205,18 @@ class _ReminderState extends State<Reminder> {
                     const Padding(
                       padding: EdgeInsets.only(bottom: 20),
                       child: Text(
-                        "ADD ALARM",
+                        "ADD Reminder",
                         style: TextStyle(color: Colors.white, fontSize: 30),
                       ),
                     ),
                     TextFormField(
                       style: const TextStyle(color: Colors.white),
                       onChanged: (value) {
-                        alarmTitle = value;
+                        reminderTitle = value;
                       },
                       decoration: const InputDecoration(
                           icon: Icon(Icons.text_fields, color: Colors.white),
-                          label: Text("Alarm Title",
+                          label: Text("Reminder Title",
                               style:
                                   TextStyle(color: Colors.white, fontSize: 20)),
                           disabledBorder: OutlineInputBorder(
@@ -199,7 +228,7 @@ class _ReminderState extends State<Reminder> {
                                   BorderSide(width: 3, color: Colors.white)),
                           border: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.white)),
-                          hintText: 'Enter alarm title',
+                          hintText: 'Enter Reminder title',
                           hintStyle: TextStyle(
                               color: Color.fromARGB(255, 150, 148, 148),
                               fontSize: 20)),
@@ -209,14 +238,14 @@ class _ReminderState extends State<Reminder> {
                       child: TextFormField(
                         style: const TextStyle(color: Colors.white),
                         onChanged: (value) {
-                          alarmTitle = value;
+                          reminderTitle = value;
                         },
                         focusNode: FocusNode(
                             canRequestFocus: false,
                             descendantsAreFocusable: false),
                         readOnly: true,
                         onTap: () {
-                          createTimeAlarm();
+                          createTimeReminder();
                         },
                         decoration: const InputDecoration(
                             icon: Icon(
@@ -235,7 +264,7 @@ class _ReminderState extends State<Reminder> {
                                     BorderSide(width: 3, color: Colors.white)),
                             border: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white)),
-                            hintText: 'Enter alarm time',
+                            hintText: 'Enter Reminder time',
                             hintStyle: TextStyle(
                                 color: Color.fromARGB(255, 150, 148, 148),
                                 fontSize: 20)),
@@ -247,7 +276,12 @@ class _ReminderState extends State<Reminder> {
             ));
   }
 
-  void createTimeAlarm() async {
+  DateTime join(DateTime date, TimeOfDay time) {
+    return new DateTime(
+        date.year, date.month, date.day, time.hour, time.minute);
+  }
+
+  void createTimeReminder() async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
       initialTime: _time,
@@ -256,12 +290,13 @@ class _ReminderState extends State<Reminder> {
       setState(() {
         _time = newTime;
         crateListItem();
+        showNotification(join(DateTime.now(), newTime));
         Navigator.pop(context);
       });
     }
   }
 
-  void createLocationAlarm() {
+  void createLocationReminder() {
     showDialog(
       context: context,
       builder: (context) {
@@ -276,7 +311,7 @@ class _ReminderState extends State<Reminder> {
                 // print(pickedData.latLong.longitude);
                 // print(pickedData.address);
                 setState(() {
-                  alarmLocation = pickedData.address.substring(0, 20);
+                  reminderLocation = pickedData.address.substring(0, 20);
                   crateListItemLocation();
                   Navigator.pop(context);
                   Navigator.pop(context);
@@ -291,7 +326,7 @@ class _ReminderState extends State<Reminder> {
     );
   }
 
-  void createAlarm() {
+  void createReminder() {
     showDialog(
       context: context,
       builder: (context) {
@@ -306,17 +341,17 @@ class _ReminderState extends State<Reminder> {
                   const Padding(
                     padding: EdgeInsets.only(bottom: 20),
                     child: Text(
-                      "ADD ALARM",
+                      "ADD Reminder",
                       style: TextStyle(color: Colors.white, fontSize: 30),
                     ),
                   ),
                   TextFormField(
                     style: const TextStyle(color: Colors.white),
                     onChanged: (value) {
-                      alarmTitle = value;
+                      reminderTitle = value;
                     },
                     decoration: const InputDecoration(
-                        label: Text("Alarm Title",
+                        label: Text("Reminder Title",
                             style:
                                 TextStyle(color: Colors.white, fontSize: 20)),
                         disabledBorder: OutlineInputBorder(
@@ -328,7 +363,7 @@ class _ReminderState extends State<Reminder> {
                                 BorderSide(width: 3, color: Colors.white)),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.white)),
-                        hintText: 'Enter alarm title',
+                        hintText: 'Enter Reminder title',
                         hintStyle: TextStyle(
                             color: Color.fromARGB(255, 150, 148, 148),
                             fontSize: 20)),
@@ -345,10 +380,10 @@ class _ReminderState extends State<Reminder> {
                           onPressed: () {
                             setState(() {
                               //Navigator.pop(context);
-                              createTimeBasedAlarm();
+                              createTimeBasedReminder();
                             });
                           },
-                          child: const Text('Add Time Based Alarm')),
+                          child: const Text('Add Time Based Reminder')),
                     ),
                   ),
                   SizedBox(
@@ -358,8 +393,8 @@ class _ReminderState extends State<Reminder> {
                           backgroundColor:
                               const Color.fromARGB(255, 60, 83, 99),
                         ),
-                        onPressed: (() => {createLocationAlarm()}),
-                        child: const Text('Add Location Based Alarm')),
+                        onPressed: (() => {createLocationReminder()}),
+                        child: const Text('Add Location Based Reminder')),
                   ),
                 ],
               )),
@@ -399,23 +434,23 @@ class _ReminderState extends State<Reminder> {
                 backgroundColor: const Color.fromARGB(255, 60, 83, 99),
               ),
               onPressed: () {
-                alarmTitle = "Time Alarm";
-                createTimeBasedAlarm();
+                reminderTitle = "Time Reminder";
+                createTimeBasedReminder();
                 _key.currentState?.toggle();
               },
-              child: const Text("Add Time Based Alarm",
+              child: const Text("Add Time Based Reminder",
                   style: TextStyle(fontSize: 15))),
           ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 60, 83, 99),
               ),
               onPressed: () {
-                alarmTitle = "Location Alarm";
-                createLocationBasedAlarm();
+                reminderTitle = "Location Reminder";
+                createLocationBasedReminder();
                 _key.currentState?.toggle();
               },
               child: const Text(
-                "Location  Based  Alarm",
+                "Location  Based  Reminder",
                 style: TextStyle(fontSize: 15),
               )),
         ],
@@ -456,7 +491,7 @@ class _ReminderState extends State<Reminder> {
                               child: Icon(
                                 db.reminderList[index][2].toDouble() == 20
                                     ? Icons.location_pin
-                                    : NavIcons.alarm,
+                                    : NavIcons.reminder,
                                 size: 30,
                                 color: Colors.white,
                               ),
@@ -535,4 +570,44 @@ class _ReminderState extends State<Reminder> {
       ),
     );
   }
+
+  void showNotification(DateTime scheduleDate) async {
+    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+        "OPEN UP ", "ITS FCUKING FBI",
+        priority: Priority.max, importance: Importance.max);
+
+    DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    NotificationDetails notiDetails =
+        NotificationDetails(android: androidDetails, iOS: iosDetails);
+
+    // DateTime scheduleDate = DateTime.now().add(Duration(seconds: 5));
+    // DateTime scheduleDate = DateTime.now().add(Duration(seconds: 5));
+
+    await notificationsPlugin.zonedSchedule(db.reminderID, "OPEN UP ",
+        "ITS FCUKING FBI", TZDateTime.from(scheduleDate, local), notiDetails,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.wallClockTime,
+        androidAllowWhileIdle: true,
+        payload: "notification-payload");
+  }
+
+  // void checkForNotification() async {
+  //   NotificationAppLaunchDetails? details =
+  //       await notificationsPlugin.getNotificationAppLaunchDetails();
+
+  //   if (details != null) {
+  //     if (details.didNotificationLaunchApp) {
+  //       NotificationResponse? response = details.notificationResponse;
+
+  //       if (response != null) {
+  //         String? payload = response.payload;
+  //       }
+  //     }
+  //   }
+  // }
 }
