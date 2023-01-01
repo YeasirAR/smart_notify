@@ -7,6 +7,7 @@ import 'package:line_icons/line_icons.dart';
 import 'alarm/alarm.dart';
 import 'database/nav_icons.dart';
 import 'reminder/reminder.dart';
+import 'stopwatch/stopwatch.dart';
 import 'timer/timer.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,10 +26,7 @@ class _HomePageState extends State<HomePage> {
     Alarm(),
     Reminder(),
     Timer(),
-    Text(
-      'Stopwatch Page',
-      style: optionStyle,
-    ),
+    StopWatch(),
   ];
   @override
   Widget build(BuildContext context) {

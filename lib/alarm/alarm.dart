@@ -81,11 +81,11 @@ class _AlarmState extends State<Alarm> {
               position.longitude,
               db.alarmList[i][5],
               db.alarmList[i][6]);
-              print("${distanceInMeters}, ${db.alarmList[i][7]}");
+          print("${distanceInMeters}, ${db.alarmList[i][7]}");
           if (distanceInMeters <= (db.alarmList[i][7])) {
             setState(() {
-              NotificationController.instantNewNotification(
-                db.alarmList[i][8], db.alarmList[i][4], db.alarmList[i][1],true);
+              NotificationController.instantNewNotification(db.alarmList[i][8],
+                  db.alarmList[i][4], db.alarmList[i][1], true);
               db.alarmList[i][3] = false;
             });
           }
@@ -136,7 +136,9 @@ class _AlarmState extends State<Alarm> {
     // print(alarmDB.get("list"));
   }
 
-  void createLocationBasedAlarm() {
+  Future<void> createLocationBasedAlarm() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
     showBarModalBottomSheet(
       context: context,
       backgroundColor: Color.fromARGB(255, 49, 63, 72),
@@ -213,7 +215,7 @@ class _AlarmState extends State<Alarm> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 15, left: 2, right: 2),
                   child: OpenStreetMapSearchAndPick(
-                    center: LatLong(23.7980746, 90.4490231),
+                    center: LatLong(position.latitude, position.longitude),
                     buttonColor: const Color.fromARGB(255, 37, 54, 68),
                     buttonText: 'Set Current Location',
                     onPicked: (pickedData) {
@@ -341,7 +343,7 @@ class _AlarmState extends State<Alarm> {
         // showNotification(join(DateTime.now(), newTime), db.alarmID);
         // NotificationController.createNewNotification(db.alarmID);
         NotificationController.scheduleNewNotification(
-            join(DateTime.now(), newTime), db.alarmID, false, alarmTitle,true);
+            join(DateTime.now(), newTime), db.alarmID, false, alarmTitle, true);
         Navigator.pop(context);
       });
     }
@@ -528,7 +530,7 @@ class _AlarmState extends State<Alarm> {
                         const Padding(
                             padding: EdgeInsets.only(left: 15),
                             child: Padding(
-                              padding: EdgeInsets.only(bottom: 0),
+                              padding: EdgeInsets.only(top: 4),
                               child: Icon(
                                 Icons.text_snippet_outlined,
                                 size: 30,
@@ -538,7 +540,7 @@ class _AlarmState extends State<Alarm> {
                         Padding(
                             padding: EdgeInsets.only(left: 15),
                             child: Padding(
-                              padding: const EdgeInsets.only(top: 8),
+                              padding: const EdgeInsets.only(top: 5),
                               child: Icon(
                                 db.alarmList[index][2].toDouble() == 20
                                     ? Icons.location_pin

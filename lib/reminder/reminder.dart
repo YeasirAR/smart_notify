@@ -80,11 +80,14 @@ class _ReminderState extends State<Reminder> {
               position.longitude,
               db.reminderList[i][5],
               db.reminderList[i][6]);
-              print("${distanceInMeters}, ${db.reminderList[i][7]}");
+          print("${distanceInMeters}, ${db.reminderList[i][7]}");
           if (distanceInMeters <= (db.reminderList[i][7])) {
             setState(() {
               NotificationController.instantNewNotification(
-                db.reminderList[i][8], db.reminderList[i][4], db.reminderList[i][1],false);
+                  db.reminderList[i][8],
+                  db.reminderList[i][4],
+                  db.reminderList[i][1],
+                  false);
               db.reminderList[i][3] = false;
             });
           }
@@ -340,7 +343,11 @@ class _ReminderState extends State<Reminder> {
         // showNotification(join(DateTime.now(), newTime), db.reminderID);
         // NotificationController.createNewNotification(db.reminderID);
         NotificationController.scheduleNewNotification(
-            join(DateTime.now(), newTime), db.reminderID, false, reminderTitle,false);
+            join(DateTime.now(), newTime),
+            db.reminderID,
+            false,
+            reminderTitle,
+            false);
         Navigator.pop(context);
       });
     }
@@ -495,7 +502,7 @@ class _ReminderState extends State<Reminder> {
                 backgroundColor: const Color.fromARGB(255, 60, 83, 99),
               ),
               onPressed: () {
-                reminderTitle = "Location Reminder";
+                reminderTitle = "Location Based";
                 createLocationBasedReminder();
                 _key.currentState?.toggle();
               },
@@ -527,7 +534,7 @@ class _ReminderState extends State<Reminder> {
                         const Padding(
                             padding: EdgeInsets.only(left: 15),
                             child: Padding(
-                              padding: EdgeInsets.only(bottom: 0),
+                              padding: EdgeInsets.only(top: 4),
                               child: Icon(
                                 Icons.text_snippet_outlined,
                                 size: 30,
@@ -537,7 +544,7 @@ class _ReminderState extends State<Reminder> {
                         Padding(
                             padding: EdgeInsets.only(left: 15),
                             child: Padding(
-                              padding: const EdgeInsets.only(top: 8),
+                              padding: const EdgeInsets.only(top: 5),
                               child: Icon(
                                 db.reminderList[index][2].toDouble() == 20
                                     ? Icons.location_pin
