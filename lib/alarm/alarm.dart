@@ -85,7 +85,7 @@ class _AlarmState extends State<Alarm> {
           if (distanceInMeters <= (db.alarmList[i][7])) {
             setState(() {
               NotificationController.instantNewNotification(
-                db.alarmList[i][8], db.alarmList[i][4], db.alarmList[i][1]);
+                db.alarmList[i][8], db.alarmList[i][4], db.alarmList[i][1],true);
               db.alarmList[i][3] = false;
             });
           }
@@ -341,7 +341,7 @@ class _AlarmState extends State<Alarm> {
         // showNotification(join(DateTime.now(), newTime), db.alarmID);
         // NotificationController.createNewNotification(db.alarmID);
         NotificationController.scheduleNewNotification(
-            join(DateTime.now(), newTime), db.alarmID, false, alarmTitle);
+            join(DateTime.now(), newTime), db.alarmID, false, alarmTitle,true);
         Navigator.pop(context);
       });
     }

@@ -21,6 +21,10 @@ class NotificationController {
               channelDescription: 'Notification tests as alerts',
               playSound: true,
               onlyAlertOnce: true,
+              enableLights: true,
+              criticalAlerts: true,
+              enableVibration: true,
+              // soundSource: '@raw/iphone',
               groupAlertBehavior: GroupAlertBehavior.Children,
               importance: NotificationImportance.High,
               defaultPrivacy: NotificationPrivacy.Private,
@@ -50,20 +54,17 @@ class NotificationController {
   @pragma('vm:entry-point')
   static Future<void> onActionReceivedMethod(
       ReceivedAction receivedAction) async {
-
-    if(
-      receivedAction.actionType == ActionType.SilentAction ||
-      receivedAction.actionType == ActionType.SilentBackgroundAction
-    ){
+    if (receivedAction.actionType == ActionType.SilentAction ||
+        receivedAction.actionType == ActionType.SilentBackgroundAction) {
       // For background actions, you must hold the execution until the end
-      print('Message sent via notification input: "${receivedAction.buttonKeyInput}"');
+      print(
+          'Message sent via notification input: "${receivedAction.buttonKeyInput}"');
       await executeLongTaskInBackground();
-    }
-    else {
+    } else {
       MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
           '/notification-page',
-              (route) =>
-          (route.settings.name != '/notification-page') || route.isFirst,
+          (route) =>
+              (route.settings.name != '/notification-page') || route.isFirst,
           arguments: receivedAction);
     }
   }
@@ -154,10 +155,11 @@ class NotificationController {
 
     await AwesomeNotifications().createNotification(
         content: NotificationContent(
-            id: id, // -1 is replaced by a random number
-            channelKey: 'alerts',
-            title: '',
-            body:'',),
+          id: id, // -1 is replaced by a random number
+          channelKey: 'alerts',
+          title: '',
+          body: '',
+        ),
         actionButtons: [
           NotificationActionButton(key: 'REDIRECT', label: 'Repeat'),
           NotificationActionButton(
@@ -168,7 +170,8 @@ class NotificationController {
         ]);
   }
 
-  static Future<void> scheduleNewNotification(DateTime dateTime,int id,bool isLocation, String alarmTitle) async {
+  static Future<void> scheduleNewNotification(DateTime dateTime, int id,
+      bool isLocation, String alarmTitle, bool isAlarm) async {
     // bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
     // if (!isAllowed) isAllowed = await displayNotificationRationale();
     // if (!isAllowed) return;
@@ -177,12 +180,14 @@ class NotificationController {
         content: NotificationContent(
             id: id, // -1 is replaced by a random number
             channelKey: 'alerts',
-            title: isLocation == false? "Time Based Alarm":"Location Based Alarm",
+            title: isLocation == false
+                ? "Time Based Alarm"
+                : "Location Based Alarm",
             body: alarmTitle,
-            category: NotificationCategory.Alarm,
-            payload: {
-              'notificationId': '1234567890'
-            }),
+            category: isAlarm == true
+                ? NotificationCategory.Alarm
+                : NotificationCategory.Reminder,
+            payload: {'notificationId': '1234567890'}),
         actionButtons: [
           NotificationActionButton(key: 'REDIRECT', label: 'Redirect'),
           NotificationActionButton(
@@ -191,32 +196,35 @@ class NotificationController {
               actionType: ActionType.DismissAction,
               isDangerousOption: true)
         ],
-        schedule: NotificationCalendar.fromDate(
-            date: dateTime));
+        schedule: NotificationCalendar.fromDate(date: dateTime));
   }
-  static Future<void> instantNewNotification(int id,bool isLocation, String alarmTitle) async {
+
+  static Future<void> instantNewNotification(
+      int id, bool isLocation, String alarmTitle, bool isAlarm) async {
     // bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
     // if (!isAllowed) isAllowed = await displayNotificationRationale();
     // if (!isAllowed) return;
 
     await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: id, // -1 is replaced by a random number
-            channelKey: 'alerts',
-            title: isLocation == false? "Time Based Alarm":"Location Based Alarm",
-            body: alarmTitle,
-            category: NotificationCategory.Alarm,
-            payload: {
-              'notificationId': '1234567890'
-            }),
-        actionButtons: [
-          NotificationActionButton(key: 'REDIRECT', label: 'Redirect'),
-          NotificationActionButton(
-              key: 'DISMISS',
-              label: 'Dismiss',
-              actionType: ActionType.DismissAction,
-              isDangerousOption: true)
-        ],);
+      content: NotificationContent(
+          id: id, // -1 is replaced by a random number
+          channelKey: 'alerts',
+          title:
+              isLocation == false ? "Time Based Alarm" : "Location Based Alarm",
+          body: alarmTitle,
+          category: isAlarm == true
+              ? NotificationCategory.Alarm
+              : NotificationCategory.Reminder,
+          payload: {'notificationId': '1234567890'}),
+      actionButtons: [
+        NotificationActionButton(key: 'REDIRECT', label: 'Done'),
+        NotificationActionButton(
+            key: 'DISMISS',
+            label: 'Dismiss',
+            actionType: ActionType.DismissAction,
+            isDangerousOption: true)
+      ],
+    );
   }
 
   static Future<void> resetBadgeCounter() async {

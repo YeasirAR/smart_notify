@@ -84,7 +84,7 @@ class _ReminderState extends State<Reminder> {
           if (distanceInMeters <= (db.reminderList[i][7])) {
             setState(() {
               NotificationController.instantNewNotification(
-                db.reminderList[i][8], db.reminderList[i][4], db.reminderList[i][1]);
+                db.reminderList[i][8], db.reminderList[i][4], db.reminderList[i][1],false);
               db.reminderList[i][3] = false;
             });
           }
@@ -340,7 +340,7 @@ class _ReminderState extends State<Reminder> {
         // showNotification(join(DateTime.now(), newTime), db.reminderID);
         // NotificationController.createNewNotification(db.reminderID);
         NotificationController.scheduleNewNotification(
-            join(DateTime.now(), newTime), db.reminderID, false, reminderTitle);
+            join(DateTime.now(), newTime), db.reminderID, false, reminderTitle,false);
         Navigator.pop(context);
       });
     }
