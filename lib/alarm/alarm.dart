@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:hive/hive.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -9,6 +8,7 @@ import 'package:smart_notify/alarm/alarm_info.dart';
 import 'package:smart_notify/database/database.dart';
 import 'package:smart_notify/database/nav_icons.dart';
 import 'package:smart_notify/homepage.dart';
+import 'package:smart_notify/notiy/noficication.dart';
 import 'package:timezone/timezone.dart';
 
 import '../main.dart';
@@ -177,7 +177,8 @@ class _AlarmState extends State<Alarm> {
                       setState(() {
                         latitude = pickedData.latLong.latitude;
                         longitude = pickedData.latLong.longitude;
-                        alarmLocation = pickedData.address.substring(0, 20);
+                        // alarmLocation = pickedData.address.substring(0, 20);
+                        alarmLocation = pickedData.address;
                         crateListItemLocation();
                         Navigator.pop(context);
                         // Navigator.pop(context);
@@ -291,7 +292,10 @@ class _AlarmState extends State<Alarm> {
       setState(() {
         _time = newTime;
         crateListItem();
-        showNotification(join(DateTime.now(), newTime), db.alarmID);
+        // showNotification(join(DateTime.now(), newTime), db.alarmID);
+        // NotificationController.createNewNotification(db.alarmID);
+        NotificationController.scheduleNewNotification(
+            join(DateTime.now(), newTime), db.alarmID, false, alarmTitle);
         Navigator.pop(context);
       });
     }
@@ -504,7 +508,9 @@ class _AlarmState extends State<Alarm> {
                         Padding(
                           padding: EdgeInsets.only(left: 15),
                           child: Text(
-                            db.alarmList[index][0],
+                            db.alarmList[index][4] == false
+                                ? "Time Alarm"
+                                : "Location Alarm",
                             style: TextStyle(fontSize: 25, color: Colors.white),
                           ),
                         ),
@@ -513,7 +519,9 @@ class _AlarmState extends State<Alarm> {
                               left: 15,
                               top: db.alarmList[index][2] == 20 ? 10 : 0),
                           child: Text(
-                            db.alarmList[index][1],
+                            db.alarmList[index][1].length > 20
+                                ? db.alarmList[index][1].substring(0, 20)
+                                : db.alarmList[index][1],
                             style: TextStyle(
                                 fontSize: db.alarmList[index][2].toDouble(),
                                 color: Colors.white),
@@ -537,8 +545,10 @@ class _AlarmState extends State<Alarm> {
                                   setState(() {
                                     db.alarmList[index][3] = v;
                                     if (!v) {
-                                      cancelNotification(
-                                          db.alarmList[index][8]);
+                                      NotificationController
+                                          .cancelNotifications(
+                                              db.alarmList[index][8]);
+                                      // cancelNotification(db.alarmList[index][8]);
                                     }
                                     // db.loadData();
                                     // db.info[index] = !db.info[index];
@@ -557,7 +567,9 @@ class _AlarmState extends State<Alarm> {
                                 iconSize: 32,
                                 onPressed: () {
                                   setState(() {
-                                    cancelNotification(db.alarmList[index][8]);
+                                    NotificationController.cancelNotifications(
+                                        db.alarmList[index][8]);
+                                    // cancelNotification(db.alarmList[index][8]);
                                     db.alarmList.removeAt(index);
                                     db.updateDataBaseAlarm();
                                     // db.loadData();
@@ -576,48 +588,4 @@ class _AlarmState extends State<Alarm> {
       ),
     );
   }
-
-  void showNotification(DateTime scheduleDate, int id) async {
-    AndroidNotificationDetails androidDetails =
-        const AndroidNotificationDetails("OPEN UP ", "ITS FCUKING FBI",
-            priority: Priority.max, importance: Importance.max);
-
-    DarwinNotificationDetails iosDetails = const DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
-
-    NotificationDetails notificationDetails =
-        NotificationDetails(android: androidDetails, iOS: iosDetails);
-
-    // DateTime scheduleDate = DateTime.now().add(Duration(seconds: 5));
-    // DateTime scheduleDate = DateTime.now().add(Duration(seconds: 5));
-
-    await notificationsPlugin.zonedSchedule(id, "OPEN UP ", "ITS FCUKING FBI",
-        TZDateTime.from(scheduleDate, local), notificationDetails,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.wallClockTime,
-        androidAllowWhileIdle: true,
-        payload: "notification-payload");
-  }
-
-  void cancelNotification(int id) {
-    notificationsPlugin.cancel(id);
-  }
-
-  // void checkForNotification() async {
-  //   NotificationAppLaunchDetails? details =
-  //       await notificationsPlugin.getNotificationAppLaunchDetails();
-
-  //   if (details != null) {
-  //     if (details.didNotificationLaunchApp) {
-  //       NotificationResponse? response = details.notificationResponse;
-
-  //       if (response != null) {
-  //         String? payload = response.payload;
-  //       }
-  //     }
-  //   }
-  // }
 }
