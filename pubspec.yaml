@@ -49,6 +49,7 @@ dependencies:
   modal_bottom_sheet: ^2.1.2
   awesome_notifications: ^0.7.4+1
   timezone: ^0.9.1
+  geolocator: ^9.0.2
   # is_first_run: ^1.0.0
 
 dev_dependencies:

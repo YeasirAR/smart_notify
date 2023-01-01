@@ -9,37 +9,37 @@ class DataBase {
   int reminderID = 1000;
 
   void createInitialDataAlarm() {
-    alarmList = [
-      ["Time Alarm", "12:00 PM", 40, false, false, 0, 0, 0],
-      //title -- time/lication -- font size -- isEnabled -- islocation -- lat--long --rad
-      [
-        "Location Alarm",
-        "UIU Playground",
-        20,
-        false,
-        true,
-        23.798811,
-        90.449632,
-        0.5
-      ],
-    ];
+    // alarmList = [
+    //   ["Time Alarm", "12:00 PM", 40, false, false, 0, 0, 0],
+    //   //title -- time/lication -- font size -- isEnabled -- islocation -- lat--long --rad
+    //   [
+    //     "Location Alarm",
+    //     "UIU Playground",
+    //     20,
+    //     false,
+    //     true,
+    //     23.798811,
+    //     90.449632,
+    //     0.5
+    //   ],
+    // ];
     alarmID = 0;
   }
 
   void createInitialDataReminder() {
-    reminderList = [
-      ["Time Reminder", "12:00 PM", 40, false, false, 0, 0, 0],
-      [
-        "Location Reminder",
-        "UIU Playground",
-        20,
-        false,
-        true,
-        23.798811,
-        90.449632,
-        0.5
-      ],
-    ];
+    // reminderList = [
+    //   ["Time Reminder", "12:00 PM", 40, false, false, 0, 0, 0],
+    //   [
+    //     "Location Reminder",
+    //     "UIU Playground",
+    //     20,
+    //     false,
+    //     true,
+    //     23.798811,
+    //     90.449632,
+    //     0.5
+    //   ],
+    // ];
     reminderID = 1000;
   }
 

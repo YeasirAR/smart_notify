@@ -1,6 +1,11 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
@@ -10,6 +15,8 @@ import 'package:smart_notify/database/nav_icons.dart';
 import 'package:smart_notify/homepage.dart';
 import 'package:smart_notify/notiy/noficication.dart';
 import 'package:timezone/timezone.dart';
+import 'package:geolocator_apple/geolocator_apple.dart';
+import 'package:geolocator_android/geolocator_android.dart';
 
 import '../main.dart';
 import 'createAlarm.dart';
@@ -26,11 +33,13 @@ class _AlarmState extends State<Alarm> {
   late int listLength;
   String alarmTitle = 'No Title';
   String alarmLocation = 'No Location';
-  double alarmRadius = 0.5;
+  double alarmRadius = 500;
   TimeOfDay _time = TimeOfDay.now();
   final alarmDB = Hive.box('alarmBox');
   DataBase db = DataBase();
   late double latitude, longitude;
+  late StreamSubscription<Position> positionStream;
+  late Position _currentPosition;
   //late int alarmID;
   @override
   void initState() {
@@ -46,8 +55,45 @@ class _AlarmState extends State<Alarm> {
     // there already exists data
     // db.updateDataBase();
     //db.loadData();
+    //testLoc();
 
     super.initState();
+    getContinuousLocation();
+    // positionStream =
+    //     Geolocator.getPositionStream(locationSettings: LocationSettings(accuracy:LocationAccuracy.high))
+    //         .listen((Position? position) {
+    //   print(position == null
+    //       ? 'Unknown'
+    //       : '${position.latitude.toString()}, ${position.longitude.toString()}');
+    // });
+  }
+
+  Future<void> getContinuousLocation() async {
+    await Geolocator.requestPermission();
+    while (true) {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      print("${position.latitude}, ${position.longitude}");
+      for (int i = 0; i < db.alarmList.length; i++) {
+        if (db.alarmList[i][3] == true && db.alarmList[i][4] == true) {
+          double distanceInMeters = Geolocator.distanceBetween(
+              position.latitude,
+              position.longitude,
+              db.alarmList[i][5],
+              db.alarmList[i][6]);
+              print("${distanceInMeters}, ${db.alarmList[i][7]}");
+          if (distanceInMeters <= (db.alarmList[i][7])) {
+            setState(() {
+              NotificationController.instantNewNotification(
+                db.alarmList[i][8], db.alarmList[i][4], db.alarmList[i][1]);
+              db.alarmList[i][3] = false;
+            });
+          }
+        }
+      }
+      await Future.delayed(const Duration(seconds: 5));
+      // sleep(const Duration(seconds: 5));
+    }
   }
 
   void crateListItem() {
@@ -137,7 +183,7 @@ class _AlarmState extends State<Alarm> {
                 child: TextFormField(
                   style: const TextStyle(color: Colors.white),
                   onChanged: (value) {
-                    alarmTitle = value;
+                    alarmRadius = value as double;
                   },
                   decoration: const InputDecoration(
                       // icon: Icon(
@@ -155,7 +201,7 @@ class _AlarmState extends State<Alarm> {
                               BorderSide(width: 3, color: Colors.white)),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white)),
-                      hintText: 'Enter alarm radius in Km',
+                      hintText: 'Enter alarm radius in meter',
                       hintStyle: TextStyle(
                           color: Color.fromARGB(255, 150, 148, 148),
                           fontSize: 20)),
@@ -587,5 +633,30 @@ class _AlarmState extends State<Alarm> {
         ),
       ),
     );
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.bestForNavigation);
   }
 }

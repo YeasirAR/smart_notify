@@ -194,6 +194,30 @@ class NotificationController {
         schedule: NotificationCalendar.fromDate(
             date: dateTime));
   }
+  static Future<void> instantNewNotification(int id,bool isLocation, String alarmTitle) async {
+    // bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
+    // if (!isAllowed) isAllowed = await displayNotificationRationale();
+    // if (!isAllowed) return;
+
+    await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: id, // -1 is replaced by a random number
+            channelKey: 'alerts',
+            title: isLocation == false? "Time Based Alarm":"Location Based Alarm",
+            body: alarmTitle,
+            category: NotificationCategory.Alarm,
+            payload: {
+              'notificationId': '1234567890'
+            }),
+        actionButtons: [
+          NotificationActionButton(key: 'REDIRECT', label: 'Redirect'),
+          NotificationActionButton(
+              key: 'DISMISS',
+              label: 'Dismiss',
+              actionType: ActionType.DismissAction,
+              isDangerousOption: true)
+        ],);
+  }
 
   static Future<void> resetBadgeCounter() async {
     await AwesomeNotifications().resetGlobalBadge();
