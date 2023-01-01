@@ -189,7 +189,7 @@ class NotificationController {
                 : NotificationCategory.Reminder,
             payload: {'notificationId': '1234567890'}),
         actionButtons: [
-          NotificationActionButton(key: 'REDIRECT', label: 'Redirect'),
+          NotificationActionButton(key: 'REDIRECT', label: 'Done'),
           NotificationActionButton(
               key: 'DISMISS',
               label: 'Dismiss',

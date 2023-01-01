@@ -36,6 +36,7 @@ class _StopWatchState extends State<StopWatch> {
 
       started = false;
     });
+    laps = [];
   }
 
   void addLaps() {
@@ -91,7 +92,7 @@ class _StopWatchState extends State<StopWatch> {
                   "$digitHours:$digitMinutes:$digitSeconds",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 82.0,
+                    fontSize: 75.0,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
